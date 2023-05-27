@@ -1,12 +1,12 @@
 namespace ConsoleUI {
     public class ConsoleDisplayAdapter : IDisplayAdapter
     {
-        public IntVec windowSize => new(Console.WindowWidth, Console.WindowHeight);
+        public IntVec WindowSize => new(Console.WindowWidth, Console.WindowHeight);
 
         public bool MoveTo(IntVec location)
         {
-            if (location.x < 0 || location.y < 0 || location.x > windowSize.x || location.y > windowSize.y) return false;
-            Console.SetCursorPosition(location.x, location.y);
+            if (location.X < 0 || location.Y < 0 || location.X > WindowSize.X || location.Y > WindowSize.Y) return false;
+            Console.SetCursorPosition(location.X, location.Y);
             return true;
         }
 

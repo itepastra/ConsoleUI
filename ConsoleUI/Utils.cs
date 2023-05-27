@@ -4,7 +4,7 @@ namespace ConsoleUI.Utils
 {
     public static class Utils
     {
-        public static T[] clampedCopy<T>(T[] source, T[] destination, int startIdx, int amount)
+        public static T[] ClampedCopy<T>(T[] source, T[] destination, int startIdx, int amount)
         {
             int endIdx = startIdx + amount;
             int destStart = Math.Max(startIdx, 0);

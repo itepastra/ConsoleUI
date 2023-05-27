@@ -2,13 +2,14 @@ namespace ConsoleUI
 {    public class Border : IDisplayable
     {
         readonly Rect bounds;
-        IDisplayable subDisplay;
+        readonly IDisplayable subDisplay;
         public Rect Bounds { get => bounds; }
 
         // horizontal, vertical, left top, right top, left bottom, right bottom
-        char[] borders;
+        private char[] borders;
+        public char[] Borders { set => borders = value; }
 
-        static readonly char[] simpleBorders = { '\u2500', '\u2502', '\u250C', '\u2510', '\u2514', '\u2518' };
+        public static readonly char[] simpleBorders = { '\u2500', '\u2502', '\u250C', '\u2510', '\u2514', '\u2518' };
 
         public event EventHandler<ContentChangeArgs>? ContentChanged;
         public event EventHandler<SizeChangeArgs>? SizeChanged;
@@ -49,24 +50,24 @@ namespace ConsoleUI
 
         public char[]? Line(int lineNum)
         {
-            if (lineNum < 0 || lineNum >= bounds.h) return null;
-            char[] lineBuf = new Char[bounds.w];
+            if (lineNum < 0 || lineNum >= bounds.H) return null;
+            char[] lineBuf = new Char[bounds.W];
 
             if (lineNum == 0)
             {
                 lineBuf[0] = borders[2];
-                lineBuf[bounds.w - 1] = borders[3];
-                for (int i = 1; i < bounds.w - 1; i++)
+                lineBuf[bounds.W - 1] = borders[3];
+                for (int i = 1; i < bounds.W - 1; i++)
                 {
                     lineBuf[i] = borders[0];
                 }
             }
-            else if (lineNum == bounds.h - 1)
+            else if (lineNum == bounds.H - 1)
             {
 
                 lineBuf[0] = borders[4];
-                lineBuf[bounds.w - 1] = borders[5];
-                for (int i = 1; i < bounds.w - 1; i++)
+                lineBuf[bounds.W - 1] = borders[5];
+                for (int i = 1; i < bounds.W - 1; i++)
                 {
                     lineBuf[i] = borders[0];
                 }
@@ -74,9 +75,9 @@ namespace ConsoleUI
             else
             {
                 lineBuf[0] = borders[1];
-                lineBuf[bounds.w - 1] = borders[1];
+                lineBuf[bounds.W - 1] = borders[1];
                 char[]? subLine = subDisplay.Line(lineNum - 1);
-                if (subLine != null) Array.Copy(subLine, 0, lineBuf, 1, subDisplay.Bounds.w);
+                if (subLine != null) Array.Copy(subLine, 0, lineBuf, 1, subDisplay.Bounds.W);
             }
 
             return lineBuf;

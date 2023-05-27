@@ -5,10 +5,10 @@ namespace ConsoleUI
     public class Display
     {
 
-        IDisplayAdapter displayAdapter;
+        readonly IDisplayAdapter displayAdapter;
         public event EventHandler<ContentChangeArgs>? ContentChanged;
 
-        IDisplayable content;
+        readonly IDisplayable content;
         public Display(IDisplayAdapter displayAdapter, IDisplayable content)
         {
             this.displayAdapter = displayAdapter;
@@ -18,7 +18,7 @@ namespace ConsoleUI
 
         public void Refresh()
         {
-            OnContentChangedEvent(content, new ContentChangeArgs(new Rect(new(0, 0), displayAdapter.windowSize)));
+            OnContentChangedEvent(content, new ContentChangeArgs(new Rect(new(0, 0), displayAdapter.WindowSize)));
         }
 
         private void OnContentChangedEvent(object? sender, ContentChangeArgs e)
@@ -27,15 +27,15 @@ namespace ConsoleUI
             IDisplayable d = (IDisplayable)sender;
             Rect updateRect = e.bounds;
 
-            for (int i = 0; i < updateRect.h; i++)
+            for (int i = 0; i < updateRect.H; i++)
             {
-                int ypos = i + updateRect.y;
-                int xpos = updateRect.x;
+                int ypos = i + updateRect.Y;
+                int xpos = updateRect.X;
 
-                char[] lineBuffer = Enumerable.Repeat(' ', displayAdapter.windowSize.x).ToArray();
+                char[] lineBuffer = Enumerable.Repeat(' ', displayAdapter.WindowSize.X).ToArray();
                 char[]? line = d.Line(ypos);
-                if (line != null) Array.Copy(line, 0, lineBuffer, d.Bounds.x, d.Bounds.w);
-                string toWrite = new(new ReadOnlySpan<char>(lineBuffer, updateRect.x, updateRect.w));
+                if (line != null) Array.Copy(line, 0, lineBuffer, d.Bounds.X, d.Bounds.W);
+                string toWrite = new(new ReadOnlySpan<char>(lineBuffer, updateRect.X, updateRect.W));
                 displayAdapter.WriteAt(new(xpos, ypos), toWrite);
             }
 
@@ -46,9 +46,9 @@ namespace ConsoleUI
 
     public interface IDisplayAdapter
     {
-        IntVec windowSize { get; }
+        IntVec WindowSize { get; }
 
-        bool MoveTo(IntVec zero);
+        bool MoveTo(IntVec location);
         bool WriteAt(IntVec location, string str);
     }
 }

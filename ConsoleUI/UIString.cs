@@ -7,9 +7,9 @@ namespace ConsoleUI
             Left, Right, Middle
         }
 
-        Rect bounds;
+        private readonly Rect bounds;
 
-        bool autoHeight;
+        private readonly bool autoHeight;
         int usedLines;
 
 
@@ -18,7 +18,7 @@ namespace ConsoleUI
         AlignmentEnum alignment;
 
         public AlignmentEnum Alignment { get => alignment; set { alignment = value; OnContentChanged(bounds); } }
-        Rect IDisplayable.Bounds { get => bounds; }
+        public Rect Bounds { get => bounds; }
         public event EventHandler<SizeChangeArgs>? SizeChanged;
         public event EventHandler<ContentChangeArgs>? ContentChanged;
 
@@ -27,16 +27,18 @@ namespace ConsoleUI
             this.autoHeight = autoHeight;
             bounds = rect;
             displayString = str;
-            alignedString = new string[bounds.h];
+            alignedString = new string[Bounds.H];
             ChangeString(str);
 
-            bounds.SizeChanged += OnSizeChanged;
+            Bounds.SizeChanged += OnSizeChanged;
         }
 
         private void OnSizeChanged(object? sender, SizeChangeArgs e)
         {
             Rect largeRect = Rect.Union(e.oldSize, e.newSize);
+            int oldLines = usedLines;
             UpdateAligned();
+            if(autoHeight && usedLines != oldLines) Bounds.Location -= new IntVec(0, 1);
             SizeChanged?.Invoke(this, e);
         }
 
@@ -45,8 +47,8 @@ namespace ConsoleUI
             displayString = newString;
             
             UpdateAligned();
-            bounds.Size -= new IntVec(0, 1);
-            OnContentChanged(bounds);
+            Bounds.Size -= new IntVec(0, 1);
+            OnContentChanged(Bounds);
         }
 
         private void UpdateAligned()
@@ -67,29 +69,29 @@ namespace ConsoleUI
 
         public char[]? Line(int lineNum)
         {
-            if (lineNum < 0 || lineNum >= bounds.h) return null;
+            if (lineNum < 0 || lineNum >= Bounds.H) return null;
             return alignedString[lineNum].ToCharArray();
         }
 
         private string[] LeftLine(string displayString)
         {
             string[] splitString = displayString.Split(' ');
-            string[] output = Enumerable.Repeat("".PadRight(bounds.w), bounds.h).ToArray();
+            string[] output = Enumerable.Repeat("".PadRight(Bounds.W), Bounds.H).ToArray();
             int currentLineLength = -1;
             int currentLine = 0;
             List<string> lineWords = new();
             foreach (string word in splitString)
             {
-                if (word.Length > bounds.w)
+                if (word.Length > Bounds.W)
                 {
                     throw new NotImplementedException("words larger than the box are not yet supported");
                 }
-                if (currentLineLength + word.Length >= bounds.w)
+                if (currentLineLength + word.Length >= Bounds.W)
                 {
-                    output[currentLine] = string.Join(" ", lineWords.ToArray()).PadRight(bounds.w);
+                    output[currentLine] = string.Join(" ", lineWords.ToArray()).PadRight(Bounds.W);
                     lineWords = new();
                     currentLine++;
-                    if (currentLine == bounds.h)
+                    if (currentLine == Bounds.H)
                     {
                         throw new NotImplementedException("String must fit in the box for now");
                     }
@@ -98,7 +100,7 @@ namespace ConsoleUI
                 lineWords.Add(word);
                 currentLineLength += word.Length + 1;
             }
-            output[currentLine] = string.Join(" ", lineWords.ToArray()).PadRight(bounds.w);
+            output[currentLine] = string.Join(" ", lineWords.ToArray()).PadRight(Bounds.W);
 
             usedLines = currentLine + 1;
             return output;
@@ -114,7 +116,7 @@ namespace ConsoleUI
         private string[] RightLine(string displayString)
         {
             string[] splitString = displayString.Split(' ');
-            string[] output = Enumerable.Repeat("".PadLeft(bounds.w), bounds.w).ToArray();
+            string[] output = Enumerable.Repeat("".PadLeft(Bounds.W), Bounds.W).ToArray();
 
             // string[] output = new string[bounds.h];
             int currentLineLength = 0;
@@ -122,16 +124,16 @@ namespace ConsoleUI
             List<string> lineWords = new();
             foreach (string word in splitString)
             {
-                if (word.Length > bounds.w)
+                if (word.Length > Bounds.W)
                 {
                     throw new NotImplementedException("words larger than the box are not yet supported");
                 }
-                if (currentLineLength + word.Length > bounds.w)
+                if (currentLineLength + word.Length > Bounds.W)
                 {
-                    output[currentLine] = string.Join(" ", lineWords.ToArray()).PadLeft(bounds.w);
+                    output[currentLine] = string.Join(" ", lineWords.ToArray()).PadLeft(Bounds.W);
                     lineWords = new();
                     currentLine++;
-                    if (currentLine == bounds.h)
+                    if (currentLine == Bounds.H)
                     {
                         throw new NotImplementedException("String must fit in the box for now");
                     }
@@ -139,7 +141,7 @@ namespace ConsoleUI
                 }
                 lineWords.Add(word);
             }
-            output[currentLine] = string.Join(" ", lineWords.ToArray()).PadLeft(bounds.w);
+            output[currentLine] = string.Join(" ", lineWords.ToArray()).PadLeft(Bounds.W);
 
             usedLines = currentLine + 1;
 

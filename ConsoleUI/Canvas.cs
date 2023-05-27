@@ -4,7 +4,7 @@ namespace ConsoleUI
     public class Canvas : IDisplayable
     {
         Rect bounds;
-        List<IDisplayable> subDisplays;
+        readonly List<IDisplayable> subDisplays;
         public event EventHandler<ContentChangeArgs>? ContentChanged;
         public event EventHandler<SizeChangeArgs>? SizeChanged;
 
@@ -50,18 +50,18 @@ namespace ConsoleUI
 
         public char[]? Line(int lineNum)
         {
-            if (lineNum < 0 || lineNum >= bounds.h) return null;
-            char[] lineBuf = Enumerable.Repeat(' ', bounds.w).ToArray();
+            if (lineNum < 0 || lineNum >= bounds.H) return null;
+            char[] lineBuf = Enumerable.Repeat(' ', bounds.W).ToArray();
 
             foreach (IDisplayable subDisplay in subDisplays)
             {
-                int relLine = lineNum - subDisplay.Bounds.Location.y;
+                int relLine = lineNum - subDisplay.Bounds.Location.Y;
                 char[]? subLine = subDisplay.Line(relLine);
 
 
                 if (subLine != null)
                 {
-                    Utils.Utils.clampedCopy(subLine, lineBuf, subDisplay.Bounds.x, subDisplay.Bounds.w);
+                    Utils.Utils.ClampedCopy(subLine, lineBuf, subDisplay.Bounds.X, subDisplay.Bounds.W);
                     // Array.Copy(subLine, 0, lineBuf, startCopy, copyAmount);
                 }
             }

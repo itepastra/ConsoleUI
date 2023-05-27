@@ -2,17 +2,20 @@ namespace ConsoleUI
 {
     public class IntVec
     {
-        public int x { get; set; }
-        public int y { get; set; }
+        private int x;
+        private int y;
         public IntVec(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
-        public static IntVec operator +(IntVec a, IntVec b) => new(a.x + b.x, a.y + b.y);
-        public static IntVec operator -(IntVec a, IntVec b) => new(a.x - b.x, a.y - b.y);
+        public int X { get => x; set => x = value; }
+        public int Y { get => y; set => y = value; }
 
-        public static IntVec Zero = new(0, 0);
+        public static IntVec operator +(IntVec a, IntVec b) => new(a.X + b.X, a.Y + b.Y);
+        public static IntVec operator -(IntVec a, IntVec b) => new(a.X - b.X, a.Y - b.Y);
+
+        public static readonly IntVec Zero = new(0,0);
     }
 }

@@ -6,15 +6,15 @@ using ConsoleUI;
 ConsoleDisplayAdapter cda = new();
 
 
-UIString iString = new("Hellooo?", new(10, 10, 28, 20));
-UIString iString2 = new("world?", new(50, 1, 20, 4));
+UIString iString = new("Hellooo?, this will now be a longer string, just so that it wraps around a bit. I'd like to test the wrapping again.", new(10, 10, 28, 20));
+UIString iString2 = new("world?, wait. If I make this a bit longer?", new(50, 1, 20, 4), true);
 
 Border border = new(new(0, 0, 30, 20), iString);
 
-Canvas ca = new(cda.windowSize);
+Canvas ca = new(cda.WindowSize);
 
-ca.AddSubDisplay(iString2);
 ca.AddSubDisplay(border);
+ca.AddSubDisplay(iString2);
 
 Display dp = new(cda, ca);
 dp.Refresh();
@@ -30,4 +30,5 @@ while (true)
     if (c.Key == ConsoleKey.S) border.Bounds.MoveRect(0, 1, 0, 0);
     if (c.Key == ConsoleKey.D) border.Bounds.MoveRect(1, 0, 0, 0);
     dp.Refresh();
+
 }
