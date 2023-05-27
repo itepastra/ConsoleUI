@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUI", "ConsoleUI\ConsoleUI.csproj", "{293645FF-59E7-4C60-9976-C184865EE2FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UITesting", "UITesting\UITesting.csproj", "{50CF9CCD-E902-46D9-BECA-180998715E8C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{293645FF-59E7-4C60-9976-C184865EE2FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{293645FF-59E7-4C60-9976-C184865EE2FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{293645FF-59E7-4C60-9976-C184865EE2FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{293645FF-59E7-4C60-9976-C184865EE2FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50CF9CCD-E902-46D9-BECA-180998715E8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50CF9CCD-E902-46D9-BECA-180998715E8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50CF9CCD-E902-46D9-BECA-180998715E8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50CF9CCD-E902-46D9-BECA-180998715E8C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3FABBC7-35E5-4A64-872B-477BC3DA15B7}
+	EndGlobalSection
+EndGlobal
