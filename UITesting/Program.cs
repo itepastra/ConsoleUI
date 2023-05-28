@@ -2,6 +2,8 @@
 
 
 using ConsoleUI;
+using Pastel;
+using System.Drawing;
 
 ConsoleDisplayAdapter cda = new();
 
@@ -18,6 +20,8 @@ ca.AddSubDisplay(iString2);
 
 Display dp = new(cda, ca);
 dp.Refresh();
+
+
 while (true)
 {
     ConsoleKeyInfo c = Console.ReadKey(true);

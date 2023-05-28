@@ -12,8 +12,7 @@ namespace ConsoleUI
 
         public event EventHandler<ContentChangeArgs>? ContentChanged;
         public event EventHandler<SizeChangeArgs>? SizeChanged;
-
-        public char[]? Line(int lineNum)
+        CString? IDisplayable.Line(int lineNum)
         {
             throw new NotImplementedException();
         }

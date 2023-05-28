@@ -48,15 +48,15 @@ namespace ConsoleUI
 
         public Rect Bounds { get => bounds; set => bounds = value; }
 
-        public char[]? Line(int lineNum)
+        public CString? Line(int lineNum)
         {
             if (lineNum < 0 || lineNum >= bounds.H) return null;
-            char[] lineBuf = Enumerable.Repeat(' ', bounds.W).ToArray();
+            CString lineBuf = new CString(bounds.W);
 
             foreach (IDisplayable subDisplay in subDisplays)
             {
                 int relLine = lineNum - subDisplay.Bounds.Location.Y;
-                char[]? subLine = subDisplay.Line(relLine);
+                CString? subLine = subDisplay.Line(relLine);
 
 
                 if (subLine != null)

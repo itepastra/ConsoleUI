@@ -6,10 +6,10 @@ namespace ConsoleUI
         public Rect Bounds { get => bounds; }
 
         // horizontal, vertical, left top, right top, left bottom, right bottom
-        private char[] borders;
-        public char[] Borders { set => borders = value; }
+        private CChar[] borders;
+        public CChar[] Borders { set => borders = value; }
 
-        public static readonly char[] simpleBorders = { '\u2500', '\u2502', '\u250C', '\u2510', '\u2514', '\u2518' };
+        public static readonly CChar[] simpleBorders = { new CChar('\u2500'), new CChar('\u2502'), new CChar('\u250C'), new CChar('\u2510'), new CChar('\u2514'), new CChar('\u2518') };
 
         public event EventHandler<ContentChangeArgs>? ContentChanged;
         public event EventHandler<SizeChangeArgs>? SizeChanged;
@@ -19,24 +19,29 @@ namespace ConsoleUI
             bounds = rect;
             borders = simpleBorders;
             subDisplay = sub;
-            subDisplay.Bounds.SetSize(Rect.ShrinkCentered(rect, 1));
+            subDisplay.Bounds.SetSize(BorderShrink(rect));
             subDisplay.ContentChanged += OnContentChangedEvent;
 
             bounds.SizeChanged += OnSizeChanged;
         }
 
+        public static Rect BorderShrink(Rect rect)
+        {
+            return Rect.ShrinkCentered(rect, 1);
+        }
+
         private void OnSizeChanged(object? sender, SizeChangeArgs e)
         {
             Rect largeRect = Rect.Union(e.oldSize, e.newSize);
-            subDisplay.Bounds.SetSize(Rect.ShrinkCentered(e.newSize, 1));
+            subDisplay.Bounds.SetSize(BorderShrink(e.newSize));
             SizeChanged?.Invoke(this, e);
         }
 
-        public Border(Rect rect, IDisplayable sub, char[] borders)
+        public Border(Rect rect, IDisplayable sub, CChar[] borders)
         {
             bounds = rect;
             subDisplay = sub;
-            subDisplay.Bounds.SetSize(Rect.ShrinkCentered(rect, 1));
+            subDisplay.Bounds.SetSize(BorderShrink(rect));
             this.borders = borders;
             subDisplay.ContentChanged += OnContentChangedEvent;
         }
@@ -48,10 +53,10 @@ namespace ConsoleUI
         }
 
 
-        public char[]? Line(int lineNum)
+        public CString? Line(int lineNum)
         {
             if (lineNum < 0 || lineNum >= bounds.H) return null;
-            char[] lineBuf = new Char[bounds.W];
+            CString lineBuf = new(bounds.W);
 
             if (lineNum == 0)
             {
@@ -76,8 +81,8 @@ namespace ConsoleUI
             {
                 lineBuf[0] = borders[1];
                 lineBuf[bounds.W - 1] = borders[1];
-                char[]? subLine = subDisplay.Line(lineNum - 1);
-                if (subLine != null) Array.Copy(subLine, 0, lineBuf, 1, subDisplay.Bounds.W);
+                CString? subLine = subDisplay.Line(lineNum - 1);
+                if (subLine != null) CString.Copy(subLine, 0, lineBuf, 1, subDisplay.Bounds.W);
             }
 
             return lineBuf;

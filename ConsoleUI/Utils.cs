@@ -16,6 +16,10 @@ namespace ConsoleUI.Utils
             return destination;
         }
 
+        public static CString ClampedCopy(CString source, CString destination, int startIdx, int amount) {
+            ClampedCopy(source.Chars, destination.Chars, startIdx, amount);
+            return destination;
+        }
 
     }
 }

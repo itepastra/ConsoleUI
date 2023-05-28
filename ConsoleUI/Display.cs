@@ -32,10 +32,10 @@ namespace ConsoleUI
                 int ypos = i + updateRect.Y;
                 int xpos = updateRect.X;
 
-                char[] lineBuffer = Enumerable.Repeat(' ', displayAdapter.WindowSize.X).ToArray();
-                char[]? line = d.Line(ypos);
-                if (line != null) Array.Copy(line, 0, lineBuffer, d.Bounds.X, d.Bounds.W);
-                string toWrite = new(new ReadOnlySpan<char>(lineBuffer, updateRect.X, updateRect.W));
+                CString lineBuffer = new CString(displayAdapter.WindowSize.X);
+                CString? line = d.Line(ypos);
+                if (line != null) CString.Copy(line, 0, lineBuffer, d.Bounds.X, d.Bounds.W);
+                string toWrite = lineBuffer.ToWriteChars(updateRect.X, updateRect.W);
                 displayAdapter.WriteAt(new(xpos, ypos), toWrite);
             }
 
