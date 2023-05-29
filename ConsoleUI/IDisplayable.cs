@@ -6,7 +6,7 @@
         public CString? Line(int lineNum);
 
         public event EventHandler<ContentChangeArgs> ContentChanged;
-        public event EventHandler<SizeChangeArgs> SizeChanged;
+        public event EventHandler<ContentChangeArgs> SelfChanged;
 
     }
 }

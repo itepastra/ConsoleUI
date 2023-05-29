@@ -6,7 +6,7 @@ namespace ConsoleUI
         Rect bounds;
         readonly List<IDisplayable> subDisplays;
         public event EventHandler<ContentChangeArgs>? ContentChanged;
-        public event EventHandler<SizeChangeArgs>? SizeChanged;
+        public event EventHandler<ContentChangeArgs>? SelfChanged;
 
         public Canvas(int width, int height)
         {
@@ -29,6 +29,7 @@ namespace ConsoleUI
         public void AddSubDisplay(IDisplayable subDisplay)
         {
             subDisplay.ContentChanged += OnContentChangedEvent;
+            subDisplay.SelfChanged += OnContentChangedEvent;
             subDisplays.Add(subDisplay);
             ContentChanged?.Invoke(this, new ContentChangeArgs(subDisplay.Bounds));
         }
@@ -36,6 +37,7 @@ namespace ConsoleUI
         public void RemoveSubDisplay(IDisplayable subDisplay)
         {
             subDisplay.ContentChanged -= OnContentChangedEvent;
+            subDisplay.SelfChanged -= OnContentChangedEvent;
             subDisplays.Remove(subDisplay);
             ContentChanged?.Invoke(this, new ContentChangeArgs(subDisplay.Bounds));
         }
@@ -43,7 +45,12 @@ namespace ConsoleUI
         private void OnContentChangedEvent(object? sender, ContentChangeArgs e)
         {
             if (sender == null) return;
-            ContentChanged?.Invoke(sender, e);
+            ContentChanged?.Invoke(this, e);
+        }
+        private void OnSelfChangedEvent(object? sender, ContentChangeArgs e)
+        {
+            if (sender == null) return;
+            SelfChanged?.Invoke(sender, e);
         }
 
         public Rect Bounds { get => bounds; set => bounds = value; }

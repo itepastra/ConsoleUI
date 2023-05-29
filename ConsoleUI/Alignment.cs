@@ -19,21 +19,38 @@ namespace ConsoleUI
 
         public CString[] AlignString(CString str, int lineWidth, int padToAmount, out int usedLines)
         {
-            CString[] splitString = str.Split(' ');
+            CString[] splitString = str.Split(' ', out List<CChar> rSpaces);
             CString[] output = Enumerable.Repeat(new CString(lineWidth), padToAmount).ToArray();
             int currentLineLength = -1;
             int currentLine = 0;
+            int lastLineStart = 0;
             List<CString> lineWords = new();
-            foreach (CString word in splitString)
+            for (int j= 0;j < splitString.Length;j++)
             {
-                if (word.Length > lineWidth)
+                CString t = splitString[j];
+                LongWord:
+                if (t.Length > lineWidth)
                 {
-                    throw new NotImplementedException("words larger than the box are not yet supported");
+                    (CString thisLine, CString nextLine) = t.SplitAt(lineWidth - currentLineLength - 1);
+                    lineWords.Add(thisLine);
+                    output[currentLine] = CString.Join(rSpaces.Take(lastLineStart).ToArray(), lineWords.ToArray());
+                    lineWords.Clear();
+                    lastLineStart = j;
+                    currentLine++;
+                    if (currentLine == padToAmount)
+                    {
+                        usedLines = padToAmount;
+                        return output; // box is full, we ignore the rest of the string
+                    }
+                    currentLineLength = -1;
+                    t = nextLine;
+                    goto LongWord;
                 }
-                if (currentLineLength + word.Length >= lineWidth)
+                if (currentLineLength + t.Length >= lineWidth)
                 {
-                    output[currentLine] = CString.Join(new(" "), lineWords.ToArray()).PadRight(lineWidth);
-                    lineWords = new();
+                    output[currentLine] = CString.Join(rSpaces.Skip(lastLineStart).ToArray(), lineWords.ToArray()).PadRight(lineWidth);
+                    lineWords.Clear();
+                    lastLineStart = j;
                     currentLine++;
                     if (currentLine == padToAmount)
                     {
@@ -42,10 +59,10 @@ namespace ConsoleUI
                     }
                     currentLineLength = -1;
                 }
-                lineWords.Add(word);
-                currentLineLength += word.Length + 1;
+                lineWords.Add(t);
+                currentLineLength += t.Length + 1;
             }
-            output[currentLine] = CString.Join(new(" "), lineWords.ToArray()).PadRight(lineWidth);
+            output[currentLine] = CString.Join(rSpaces.Take(lastLineStart).ToArray(), lineWords.ToArray()).PadRight(lineWidth);
 
             usedLines = currentLine + 1;
             return output;
@@ -53,34 +70,54 @@ namespace ConsoleUI
     }
     public class RightAlignment : IAlignment
     {
+        static string patternToFilter = @"\u001b\[\d+;\d+;\d+;\d+;\d+m";
+
         public CString[] AlignString(CString str, int lineWidth, int padToAmount, out int usedLines)
         {
-            CString[] splitString = str.Split(' ');
+            CString[] splitString = str.Split(' ', out List<CChar> rSpaces);
             CString[] output = Enumerable.Repeat(new CString(lineWidth), padToAmount).ToArray();
             int currentLineLength = -1;
             int currentLine = 0;
+            int lastLineStart = 0;
             List<CString> lineWords = new();
-            foreach (CString word in splitString)
+            for (int j = 0; j < splitString.Length; j++)
             {
-                if (word.Length > lineWidth)
+                CString t = splitString[j];
+            LongWord:
+                if (t.Length > lineWidth)
                 {
-                    throw new NotImplementedException("words larger than the box are not yet supported");
-                }
-                if (currentLineLength + word.Length >= lineWidth)
-                {
-                    output[currentLine] = CString.Join(new(" "), lineWords.ToArray()).PadLeft(lineWidth);
-                    lineWords = new();
+                    (CString thisLine, CString nextLine) = t.SplitAt(lineWidth - currentLineLength - 1);
+                    lineWords.Add(thisLine);
+                    output[currentLine] = CString.Join(rSpaces.Take(lastLineStart).ToArray(), lineWords.ToArray());
+                    lineWords.Clear();
+                    lastLineStart = j;
                     currentLine++;
                     if (currentLine == padToAmount)
                     {
-                        break; // box is full, we ignore the rest of the string
+                        usedLines = padToAmount;
+                        return output; // box is full, we ignore the rest of the string
+                    }
+                    currentLineLength = -1;
+                    t = nextLine;
+                    goto LongWord;
+                }
+                if (currentLineLength + t.Length >= lineWidth)
+                {
+                    output[currentLine] = CString.Join(rSpaces.Take(lastLineStart).ToArray(), lineWords.ToArray()).PadLeft(lineWidth);
+                    lineWords.Clear();
+                    currentLine++;
+                    lastLineStart = j;
+                    if (currentLine == padToAmount)
+                    {
+                        usedLines = padToAmount;
+                        return output; // box is full, we ignore the rest of the string
                     }
                     currentLineLength = -1;
                 }
-                lineWords.Add(word);
-                currentLineLength += word.Length + 1;
+                lineWords.Add(t);
+                currentLineLength += t.Length + 1;
             }
-            output[currentLine] = CString.Join(new(" "), lineWords.ToArray()).PadLeft(lineWidth);
+            output[currentLine] = CString.Join(rSpaces.Take(lastLineStart).ToArray(), lineWords.ToArray()).PadLeft(lineWidth);
 
             usedLines = currentLine + 1;
             return output;

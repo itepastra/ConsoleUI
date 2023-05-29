@@ -36,8 +36,8 @@ namespace ConsoleUI
 
         public void MoveRect( int dx, int dy, int dw, int dh)
         {
-            IntVec oldLoc = Location;
-            IntVec oldSize = Size;
+            IntVec oldLoc = Location.Copy();
+            IntVec oldSize = Size.Copy();
             this.location = Location + new IntVec(dx, dy);
             this.size = Size + new IntVec(dw, dh);
             SizeChanged?.Invoke(this, new(new(oldLoc, oldSize), this));
@@ -47,6 +47,11 @@ namespace ConsoleUI
         {
             location = IntVec.Zero;
             size = IntVec.Zero;
+        }
+
+        public override string ToString()
+        {
+            return $"loc: {Location}, size: {Size}";
         }
 
         private void LocationChange(IntVec newLoc)
@@ -101,25 +106,25 @@ namespace ConsoleUI
             int w = r1.W;
             int h = r1.H;
             if (r1.Left < r2.Left) x = r2.Left;
-            if (r1.Top < r2.Top) x = r2.Top;
-            if (r1.Right > r2.Right) x = r2.Right;
-            if (r1.Bottom > r2.Bottom) x = r2.Bottom;
+            if (r1.Top < r2.Top) y = r2.Top;
+            if (r1.Right > r2.Right) w = r2.Right - x;
+            if (r1.Bottom > r2.Bottom) h = r2.Bottom - y;
 
             return new(x,y,w,h);
         }
 
-        public static Rect ShrinkCentered(Rect rect, int amount)
+        public static Rect? ShrinkCentered(Rect rect, int amount)
         {
             IntVec newLoc = new(rect.Location.X + amount, rect.Location.Y + amount);
             IntVec newSize = new(rect.W - 2 * amount, rect.H - 2 * amount);
-            if (newSize.X < 1 || newSize.Y < 1) throw new ArgumentOutOfRangeException($"rect could not be shrinked by {amount}");
+            if (newSize.X < 1 || newSize.Y < 1) return null;
             return new(newLoc, newSize);
         }
 
         public static Rect Union(Rect r1, Rect r2)
         {
-            IntVec leftTop = new(Math.Min(r1.Location.X, r2.Location.X), Math.Min(r1.Location.Y, r2.Location.Y));
-            IntVec rightBot = new(Math.Max(r1.Location.X + r1.W, r2.Location.X + r2.W), Math.Max(r1.Location.Y + r1.H, r2.Location.Y + r2.H));
+            IntVec leftTop = new(Math.Min(r1.Left, r2.Left), Math.Min(r1.Top, r2.Top));
+            IntVec rightBot = new(Math.Max(r1.Right, r2.Right), Math.Max(r1.Bottom, r2.Bottom));
             IntVec newSize = rightBot - leftTop;
             return new(leftTop, newSize);
         }

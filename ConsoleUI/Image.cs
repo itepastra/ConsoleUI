@@ -11,7 +11,7 @@ namespace ConsoleUI
         public Rect Bounds => throw new NotImplementedException();
 
         public event EventHandler<ContentChangeArgs>? ContentChanged;
-        public event EventHandler<SizeChangeArgs>? SizeChanged;
+        public event EventHandler<ContentChangeArgs>? SelfChanged;
         CString? IDisplayable.Line(int lineNum)
         {
             throw new NotImplementedException();

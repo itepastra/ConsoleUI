@@ -17,5 +17,15 @@ namespace ConsoleUI
         public static IntVec operator -(IntVec a, IntVec b) => new(a.X - b.X, a.Y - b.Y);
 
         public static readonly IntVec Zero = new(0,0);
+
+        public override string ToString()
+        {
+            return $"({X},{Y})";
+        }
+
+        internal IntVec Copy()
+        {
+            return new IntVec(X, Y);
+        }
     }
 }

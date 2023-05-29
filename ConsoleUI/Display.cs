@@ -14,6 +14,7 @@ namespace ConsoleUI
             this.displayAdapter = displayAdapter;
             this.content = content;
             this.content.ContentChanged += OnContentChangedEvent;
+            this.content.SelfChanged += OnContentChangedEvent;
         }
 
         public void Refresh()
@@ -25,7 +26,7 @@ namespace ConsoleUI
         {
             if (sender == null) return;
             IDisplayable d = (IDisplayable)sender;
-            Rect updateRect = e.bounds;
+            Rect updateRect = Rect.Clamp(e.bounds, new(IntVec.Zero, displayAdapter.WindowSize));
 
             for (int i = 0; i < updateRect.H; i++)
             {

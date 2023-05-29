@@ -17,7 +17,7 @@ namespace ConsoleUI
 
         public IAlignment Alignment { get => alignment; set { alignment = value; OnContentChanged(bounds); } }
         public Rect Bounds { get => bounds; }
-        public event EventHandler<SizeChangeArgs>? SizeChanged;
+        public event EventHandler<ContentChangeArgs>? SelfChanged;
         public event EventHandler<ContentChangeArgs>? ContentChanged;
 
         public UIString(string str, Rect rect, bool autoHeight = false)
@@ -38,7 +38,7 @@ namespace ConsoleUI
             int oldLines = usedLines;
             UpdateAligned();
             if (autoHeight && usedLines != oldLines) Bounds.Size -= new IntVec(0, 1);
-            SizeChanged?.Invoke(this, e);
+            SelfChanged?.Invoke(this, new(largeRect));
         }
 
         public void ChangeString(CString newString)
@@ -46,7 +46,6 @@ namespace ConsoleUI
             displayString = newString;
 
             UpdateAligned();
-            Bounds.Size -= new IntVec(0, 1);
             OnContentChanged(Bounds);
         }
 
@@ -57,7 +56,7 @@ namespace ConsoleUI
 
         private void OnContentChanged(Rect contentRect)
         {
-            ContentChanged?.Invoke(this, new ContentChangeArgs(contentRect));
+            ContentChanged?.Invoke(this, new ContentChangeArgs(Bounds));
         }
 
         public CString? Line(int lineNum)

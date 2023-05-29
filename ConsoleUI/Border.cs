@@ -15,20 +15,30 @@ namespace ConsoleUI
         public static readonly CChar[] simpleBorders = { new CChar('\u2500', Color.Purple, null), new CChar('\u2502', Color.Yellow, null), new CChar('\u250C', Color.Green, null), new CChar('\u2510', Color.AliceBlue, Color.Wheat), new CChar('\u2514', Color.Aqua, Color.Black), new CChar('\u2518', Color.Red, Color.Black) };
 
         public event EventHandler<ContentChangeArgs>? ContentChanged;
-        public event EventHandler<SizeChangeArgs>? SizeChanged;
+        public event EventHandler<ContentChangeArgs>? SelfChanged;
 
         public Border(Rect rect, IDisplayable sub)
         {
             bounds = rect;
             borders = simpleBorders;
             subDisplay = sub;
-            subDisplay.Bounds.SetSize(BorderShrink(rect));
+            Rect? inner;
+            if ((inner = BorderShrink(bounds)) != null) subDisplay.Bounds.SetSize(inner); else throw new ArgumentException("Can not create a border without room for content");
             subDisplay.ContentChanged += OnContentChangedEvent;
 
             bounds.SizeChanged += OnSizeChanged;
         }
+        public Border(Rect rect, IDisplayable sub, CChar[] borders)
+        {
+            bounds = rect;
+            subDisplay = sub;
+            Rect? inner;
+            if ((inner = BorderShrink(bounds)) != null) subDisplay.Bounds.SetSize(inner); else throw new ArgumentException("Can not create a border without room for content");
+            this.borders = borders;
+            subDisplay.ContentChanged += OnContentChangedEvent;
+        }
 
-        public static Rect BorderShrink(Rect rect)
+        public static Rect? BorderShrink(Rect rect)
         {
             return Rect.ShrinkCentered(rect, 1);
         }
@@ -36,23 +46,22 @@ namespace ConsoleUI
         private void OnSizeChanged(object? sender, SizeChangeArgs e)
         {
             Rect largeRect = Rect.Union(e.oldSize, e.newSize);
-            subDisplay.Bounds.SetSize(BorderShrink(e.newSize));
-            SizeChanged?.Invoke(this, e);
+            Rect? newInner;
+            if ((newInner = BorderShrink(e.newSize)) != null)
+            {
+                subDisplay.Bounds.SetSize(newInner);
+                SelfChanged?.Invoke(this, new(largeRect));
+            } else
+            {
+                this.bounds.SetSize(e.oldSize);
+            }
         }
 
-        public Border(Rect rect, IDisplayable sub, CChar[] borders)
-        {
-            bounds = rect;
-            subDisplay = sub;
-            subDisplay.Bounds.SetSize(BorderShrink(rect));
-            this.borders = borders;
-            subDisplay.ContentChanged += OnContentChangedEvent;
-        }
 
         private void OnContentChangedEvent(object? sender, ContentChangeArgs e)
         {
             if (sender == null) return;
-            ContentChanged?.Invoke(sender, e);
+            ContentChanged?.Invoke(this, e);
         }
 
 
