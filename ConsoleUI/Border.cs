@@ -1,5 +1,8 @@
+using System.Drawing;
+
 namespace ConsoleUI
-{    public class Border : IDisplayable
+{
+    public class Border : IDisplayable
     {
         readonly Rect bounds;
         readonly IDisplayable subDisplay;
@@ -9,7 +12,7 @@ namespace ConsoleUI
         private CChar[] borders;
         public CChar[] Borders { set => borders = value; }
 
-        public static readonly CChar[] simpleBorders = { new CChar('\u2500'), new CChar('\u2502'), new CChar('\u250C'), new CChar('\u2510'), new CChar('\u2514'), new CChar('\u2518') };
+        public static readonly CChar[] simpleBorders = { new CChar('\u2500', Color.Purple, null), new CChar('\u2502', Color.Yellow, null), new CChar('\u250C', Color.Green, null), new CChar('\u2510', Color.AliceBlue, Color.Wheat), new CChar('\u2514', Color.Aqua, Color.Black), new CChar('\u2518', Color.Red, Color.Black) };
 
         public event EventHandler<ContentChangeArgs>? ContentChanged;
         public event EventHandler<SizeChangeArgs>? SizeChanged;

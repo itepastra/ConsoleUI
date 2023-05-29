@@ -15,8 +15,8 @@ Border border = new(new(0, 0, 30, 20), iString);
 
 Canvas ca = new(cda.WindowSize);
 
-ca.AddSubDisplay(border);
 ca.AddSubDisplay(iString2);
+ca.AddSubDisplay(border);
 
 Display dp = new(cda, ca);
 dp.Refresh();

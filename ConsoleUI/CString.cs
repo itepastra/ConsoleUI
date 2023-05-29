@@ -13,16 +13,16 @@ namespace ConsoleUI
     public struct CChar
     {
         public char chr { get; }
-        public Color? foreground { get; set; }
-        public Color? background { get; set; }
+        public Color foreground { get; set; }
+        public Color background { get; set; }
 
         public CChar(char c) : this(c, null, null) { }
 
         public CChar(char c, Color? f, Color? b)
         {
             chr = c;
-            foreground = f;
-            background = b;
+            foreground = f.GetValueOrDefault(Color.White) ;
+            background = b.GetValueOrDefault(Color.Black);
         }
 
     }
@@ -49,6 +49,10 @@ namespace ConsoleUI
         {
             chars = s.Select(c => new CChar(c)).ToArray();
         }
+        public CString(string s, Color? fg, Color? bg)
+        {
+            chars = s.Select(c => new CChar(c, fg, bg)).ToArray();
+        }
 
         public CString(int lineWidth)
         {
@@ -62,7 +66,9 @@ namespace ConsoleUI
 
 
         public static explicit operator CString(string s) => new CString(s);
-        public static explicit operator string(CString s) => new string(s.Chars.Select(i => i.chr).ToArray());
+        public static explicit operator string(CString s) => s.ToWriteChars(0, s.Length);
+
+        public override string ToString() => ToWriteChars(0, Length);
 
         internal CString[] Split(char v)
         {
@@ -124,46 +130,27 @@ namespace ConsoleUI
             List<string> outStrings = new();
             List<Char> colorChars = new();
 
-            Color fg = charsToWrite.Select(c => c.foreground).SkipWhile(c => c == null).FirstOrDefault().GetValueOrDefault(Color.White);
-            Color bg = charsToWrite.Select(c => c.background).SkipWhile(c => c == null).FirstOrDefault().GetValueOrDefault(Color.Black);
+            Color fg = charsToWrite.Select(c => c.foreground).First();
+            Color bg = charsToWrite.Select(c => c.background).First();
 
             foreach (CChar c in charsToWrite)
             {
-                if (c.foreground == null && c.background == null)
+
+
+                if ((c.foreground != fg) || (c.background != bg))
                 {
-                    colorChars.Add(c.chr);
-                }
-                else if (c.background != null && c.foreground != null)
-                {
-                    //  change both
-                    string s = new string(colorChars.ToArray()).Pastel(fg).PastelBg(bg);
+                    string thisWord = new string(colorChars.ToArray());
+                    thisWord = thisWord.Pastel(fg).PastelBg(bg); 
+                    fg = c.foreground; 
+                    bg = c.background; 
+                    outStrings.Add(thisWord);
                     colorChars.Clear();
-                    outStrings.Add(s);
-                    fg = c.foreground.Value;
-                    bg = c.background.Value;
-                    colorChars.Add(c.chr);
                 }
-                else if (c.foreground != null)
-                {
-                    // change foreground
-                    string s = new string(colorChars.ToArray()).Pastel(fg);
-                    colorChars.Clear();
-                    outStrings.Add(s);
-                    fg = c.foreground.Value;
-                    colorChars.Add(c.chr);
-                }
-                else if (c.background != null)
-                {
-                    // change background
-                    string s = new string(colorChars.ToArray()).PastelBg(bg);
-                    colorChars.Clear();
-                    outStrings.Add(s);
-                    bg = c.background.Value;
-                    colorChars.Add(c.chr);
-                }
+
+                colorChars.Add(c.chr);
             }
 
-            outStrings.Add(new string(colorChars.ToArray()).Pastel(fg).PastelBg(bg));
+            if (colorChars.Count > 0) outStrings.Add(new string(colorChars.ToArray()).Pastel(fg).PastelBg(bg));
             return string.Join("", outStrings.ToArray());
         }
 
